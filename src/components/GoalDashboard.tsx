@@ -5,6 +5,8 @@ import { mockGoals } from '@/data/mockGoals';
 import GoalCard from './GoalCard';
 import GoalCreator from './GoalCreator';
 import NudgeContainer from './NudgeContainer';
+import GoalAchievements from './GoalAchievements';
+import GoalReminders from './GoalReminders';
 import { useToast } from '@/components/ui/use-toast';
 
 const GoalDashboard: React.FC = () => {
@@ -64,6 +66,14 @@ const GoalDashboard: React.FC = () => {
     }));
   };
   
+  const handleDismissReminder = (reminderId: string) => {
+    toast({
+      title: "Reminder dismissed",
+      description: "The reminder has been removed from your dashboard",
+      duration: 3000,
+    });
+  };
+  
   // Get all non-dismissed nudges across all goals
   const allNudges = goals
     .flatMap(goal => goal.nudges
@@ -88,6 +98,13 @@ const GoalDashboard: React.FC = () => {
           onDismiss={handleDismissNudge} 
         />
       )}
+      
+      <GoalAchievements goals={goals} />
+      
+      <GoalReminders 
+        goals={goals} 
+        onDismissReminder={handleDismissReminder} 
+      />
       
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Your Financial Goals</h2>
