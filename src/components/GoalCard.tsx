@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import GoalActions from './GoalActions';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface GoalCardProps {
   goal: Goal;
@@ -26,6 +27,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
   const [showActions, setShowActions] = useState(false);
+  const navigate = useNavigate();
   
   const progress = calculateProgress(goal.currentAmount, goal.targetAmount);
   const daysRemaining = getDaysRemaining(goal.deadline);
@@ -37,12 +39,19 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
     setShowActions(false);
   };
   
+  const handleCardClick = () => {
+    navigate(`/goals/${goal.id}`);
+  };
+  
   return (
     <motion.div
       whileHover={{ scale: 1.02, y: -5 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
-      <Card className="rounded-3xl overflow-hidden backdrop-blur-lg bg-white/90 dark:bg-gray-800/40 border border-white/20 dark:border-white/5 shadow-lg hover:shadow-xl transition-all duration-300">
+      <Card 
+        className="rounded-3xl overflow-hidden backdrop-blur-lg bg-white/90 dark:bg-gray-800/40 border border-white/20 dark:border-white/5 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+        onClick={handleCardClick}
+      >
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center">
@@ -127,14 +136,21 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
           
           <div className="flex space-x-2 mt-2">
             <Button 
-              onClick={() => setShowActions(!showActions)} 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowActions(!showActions);
+              }} 
               className="w-full bg-gradient-to-r from-finxpert-primary to-finxpert-vivid-purple dark:from-finxpert-vivid-purple dark:to-purple-600 hover:from-finxpert-primary/90 hover:to-finxpert-vivid-purple/90 dark:hover:from-finxpert-vivid-purple/90 dark:hover:to-purple-600/90 text-white transition-all duration-300 rounded-xl"
             >
               {showActions ? "Cancel" : "Update Goal"}
             </Button>
           </div>
           
-          {showActions && <GoalActions goal={goal} onUpdate={handleUpdate} />}
+          {showActions && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <GoalActions goal={goal} onUpdate={handleUpdate} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>
