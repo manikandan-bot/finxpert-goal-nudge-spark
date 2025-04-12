@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Nudge } from '@/types/goals';
 import { Card } from '@/components/ui/card';
@@ -29,10 +28,21 @@ const NudgeTypeIcons = {
   'celebration': Trophy,
 };
 
+// Array of inspiring header texts to rotate through
+const inspiringHeaders = [
+  "💡 Smart Boosts to Speed Up Your Goals",
+  "❤️ Your Personalized Money Motivators",
+  "🔥 Daily Nudges That Fuel Your Financial Wins",
+  "✨ Tailored Tips for Financial Success",
+  "🚀 Momentum Builders for Your Wealth Journey"
+];
+
 const NudgeContainer: React.FC<NudgeContainerProps> = ({ nudges, onDismiss }) => {
   const [activeCategory, setActiveCategory] = useState<NudgeCategory>('all');
   const [viewMode, setViewMode] = useState<NudgeViewMode>('grid');
   const { toast } = useToast();
+  // Randomly select one of the inspiring headers
+  const [headerText] = useState(inspiringHeaders[Math.floor(Math.random() * inspiringHeaders.length)]);
   
   // Exit early if no nudges
   if (nudges.length === 0) return null;
@@ -108,9 +118,9 @@ const NudgeContainer: React.FC<NudgeContainerProps> = ({ nudges, onDismiss }) =>
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center mb-2"
+        className="flex justify-between items-center mb-4"
       >
-        <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Your Nudges</h2>
+        <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-finxpert-primary to-finxpert-vivid-purple">{headerText}</h2>
         <div className="flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
