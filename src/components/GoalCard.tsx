@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { Goal } from '@/types/goals';
 import { formatCurrency, calculateProgress, formatDaysRemaining, getDaysRemaining, getMotivationalMessage, needsAttention } from '@/utils/goalUtils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -74,8 +73,6 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
           <Progress 
             value={progress} 
             className="h-2 bg-gray-100" 
-            indicatorClassName="progress-bg animate-progress-fill" 
-            style={{ "--progress-width": `${progress}%` } as React.CSSProperties}
           />
         </div>
         
