@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { Nudge } from '@/types/goals';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, AlertCircle, Lightbulb, Trophy, Heart, Plus, Filter } from 'lucide-react';
+import { X, AlertCircle, Lightbulb, Trophy, Heart, Plus, Filter, Droplet, Dumbbell, Brain } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from '@/hooks/use-toast';
 
 interface NudgeContainerProps {
   nudges: Array<Nudge & { goalName: string; goalId: string }>;
@@ -15,41 +17,56 @@ interface NudgeContainerProps {
 }
 
 type NudgeCategory = 'all' | 'encouragement' | 'suggestion' | 'warning' | 'celebration';
+type NudgeViewMode = 'grid' | 'list';
+
+const NudgeTypeIcons = {
+  'hydration': Droplet,
+  'exercise': Dumbbell,
+  'focus': Brain,
+  'encouragement': Heart,
+  'suggestion': Lightbulb,
+  'warning': AlertCircle,
+  'celebration': Trophy,
+};
 
 const NudgeContainer: React.FC<NudgeContainerProps> = ({ nudges, onDismiss }) => {
   const [activeCategory, setActiveCategory] = useState<NudgeCategory>('all');
+  const [viewMode, setViewMode] = useState<NudgeViewMode>('grid');
+  const { toast } = useToast();
   
   // Exit early if no nudges
   if (nudges.length === 0) return null;
   
   const getNudgeIcon = (type: Nudge['type']) => {
-    switch (type) {
-      case 'encouragement':
-        return <Heart className="h-5 w-5 text-pink-500" />;
-      case 'suggestion':
-        return <Lightbulb className="h-5 w-5 text-amber-500" />;
-      case 'warning':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'celebration':
-        return <Trophy className="h-5 w-5 text-green-500" />;
-      default:
-        return <Lightbulb className="h-5 w-5 text-amber-500" />;
-    }
+    const IconComponent = NudgeTypeIcons[type as keyof typeof NudgeTypeIcons] || Lightbulb;
+    return <IconComponent className={cn(
+      "h-5 w-5",
+      type === 'encouragement' ? "text-pink-500" : 
+      type === 'suggestion' ? "text-amber-500" :
+      type === 'warning' ? "text-red-500" : 
+      type === 'celebration' ? "text-green-500" :
+      "text-finxpert-primary"
+    )} />;
   };
   
   const getNudgeColor = (type: Nudge['type']) => {
     switch (type) {
       case 'encouragement':
-        return "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200";
+        return "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-900/20 dark:to-purple-900/20 dark:border-pink-800/30";
       case 'suggestion':
-        return "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200";
+        return "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200 dark:from-amber-900/20 dark:to-yellow-900/20 dark:border-amber-800/30";
       case 'warning':
-        return "bg-gradient-to-br from-red-50 to-orange-50 border-red-200";
+        return "bg-gradient-to-br from-red-50 to-orange-50 border-red-200 dark:from-red-900/20 dark:to-orange-900/20 dark:border-red-800/30";
       case 'celebration':
-        return "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200";
+        return "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-800/30";
       default:
-        return "bg-gradient-to-br from-finxpert-soft-purple to-finxpert-light border-finxpert-light";
+        return "bg-gradient-to-br from-finxpert-soft-purple to-finxpert-light border-finxpert-light dark:from-finxpert-primary/10 dark:to-finxpert-vivid-purple/10 dark:border-finxpert-primary/20";
     }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   const nudgeVariants = {
@@ -78,125 +95,160 @@ const NudgeContainer: React.FC<NudgeContainerProps> = ({ nudges, onDismiss }) =>
     celebration: nudges.filter(n => n.type === 'celebration').length
   };
   
+  const handleAddNudge = () => {
+    toast({
+      title: "Create New Nudge",
+      description: "This feature will be available soon!",
+      duration: 3000,
+    });
+  };
+  
   return (
     <div className="mb-8 space-y-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-medium text-gray-800">Your Nudges</h2>
-        <Button 
-          size="sm" 
-          variant="outline" 
-          className="flex items-center space-x-1 bg-white shadow-sm hover:shadow border border-finxpert-light"
-        >
-          <Filter className="h-3.5 w-3.5 text-finxpert-secondary" />
-          <span className="text-xs font-medium">Filter</span>
-        </Button>
-      </div>
-
-      <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setActiveCategory(value as NudgeCategory)}>
-        <TabsList className="grid grid-cols-5 mb-4 bg-finxpert-soft-purple/50">
-          <TabsTrigger value="all" className="text-xs">
-            All ({categoryCount.all})
-          </TabsTrigger>
-          <TabsTrigger value="encouragement" className="text-xs">
-            <Heart className="h-3 w-3 mr-1" /> ({categoryCount.encouragement})
-          </TabsTrigger>
-          <TabsTrigger value="suggestion" className="text-xs">
-            <Lightbulb className="h-3 w-3 mr-1" /> ({categoryCount.suggestion})
-          </TabsTrigger>
-          <TabsTrigger value="warning" className="text-xs">
-            <AlertCircle className="h-3 w-3 mr-1" /> ({categoryCount.warning})
-          </TabsTrigger>
-          <TabsTrigger value="celebration" className="text-xs">
-            <Trophy className="h-3 w-3 mr-1" /> ({categoryCount.celebration})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filteredNudges.map((nudge, i) => (
-              <motion.div
-                key={nudge.id}
-                custom={i}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={nudgeVariants}
-                layout
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center mb-2"
+      >
+        <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Your Nudges</h2>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex items-center space-x-1 bg-white/80 dark:bg-white/5 backdrop-blur-sm shadow-sm hover:shadow border border-finxpert-light dark:border-white/10 text-finxpert-secondary dark:text-gray-300"
+                onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
               >
-                <Card 
-                  className={cn(
-                    "p-4 border backdrop-blur-sm shadow-sm hover:shadow transition-all duration-300",
-                    getNudgeColor(nudge.type)
-                  )}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-white/60 backdrop-blur-sm rounded-full">
-                        {getNudgeIcon(nudge.type)}
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <p className="text-sm font-medium">{nudge.goalName}</p>
-                          <Badge variant="outline" className="text-[0.65rem] py-0 px-1.5 h-4 bg-white/70 backdrop-blur-sm">
-                            {nudge.type.charAt(0).toUpperCase() + nudge.type.slice(1)}
-                          </Badge>
-                        </div>
-                        <p className="text-sm mt-1">{nudge.message}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(nudge.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                      </div>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-7 w-7 p-0 rounded-full hover:bg-white/70"
-                      onClick={() => onDismiss(nudge.goalId, nudge.id)}
+                <Filter className="h-3.5 w-3.5" />
+                <span className="text-xs font-medium">View</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Toggle between grid and list view</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setActiveCategory(value as NudgeCategory)}>
+          <TabsList className="grid grid-cols-5 mb-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md rounded-xl border border-finxpert-light/50 dark:border-white/5 p-1">
+            <TabsTrigger 
+              value="all" 
+              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
+            >
+              All ({categoryCount.all})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="encouragement" 
+              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
+            >
+              <Heart className="h-3 w-3 mr-1" /> ({categoryCount.encouragement})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="suggestion" 
+              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
+            >
+              <Lightbulb className="h-3 w-3 mr-1" /> ({categoryCount.suggestion})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="warning" 
+              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
+            >
+              <AlertCircle className="h-3 w-3 mr-1" /> ({categoryCount.warning})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="celebration" 
+              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
+            >
+              <Trophy className="h-3 w-3 mr-1" /> ({categoryCount.celebration})
+            </TabsTrigger>
+          </TabsList>
+
+          <AnimatePresence mode="wait">
+            <TabsContent value={activeCategory} className="mt-0">
+              <div className={cn(
+                "grid gap-4",
+                viewMode === 'grid' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+              )}>
+                <AnimatePresence>
+                  {filteredNudges.map((nudge, i) => (
+                    <motion.div
+                      key={nudge.id}
+                      custom={i}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      variants={nudgeVariants}
+                      layout
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
-                      <X className="h-4 w-4" />
-                      <span className="sr-only">Dismiss</span>
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </TabsContent>
+                      <Card 
+                        className={cn(
+                          "p-5 backdrop-blur-md shadow-lg dark:shadow-2xl hover:shadow-xl transition-all duration-300 rounded-3xl border",
+                          getNudgeColor(nudge.type)
+                        )}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-start space-x-4">
+                            <div className="p-3 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-2xl shadow-inner">
+                              {getNudgeIcon(nudge.type)}
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2 mb-1">
+                                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{nudge.goalName}</p>
+                                <Badge variant="outline" className="text-[0.65rem] py-0 px-2 h-4 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm font-medium rounded-full">
+                                  {nudge.type.charAt(0).toUpperCase() + nudge.type.slice(1)}
+                                </Badge>
+                              </div>
+                              <p className="text-sm mt-1 text-gray-700 dark:text-gray-300 font-medium">{nudge.message}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                {new Date(nudge.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 rounded-full hover:bg-white/70 dark:hover:bg-white/10"
+                            onClick={() => onDismiss(nudge.goalId, nudge.id)}
+                          >
+                            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                            <span className="sr-only">Dismiss</span>
+                          </Button>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </TabsContent>
+          </AnimatePresence>
+        </Tabs>
+      </motion.div>
 
-        <TabsContent value="encouragement" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* The same card rendering logic will be handled by the 'all' tab filter */}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="suggestion" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* The same card rendering logic will be handled by the 'all' tab filter */}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="warning" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* The same card rendering logic will be handled by the 'all' tab filter */}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="celebration" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* The same card rendering logic will be handled by the 'all' tab filter */}
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      <div className="flex justify-center mt-4">
+      <motion.div 
+        className="flex justify-center mt-8"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10, delay: 0.3 }}
+      >
         <Button 
-          size="sm"
-          className="rounded-full w-10 h-10 p-0 bg-finxpert-primary hover:bg-finxpert-vivid-purple shadow-md hover:shadow-lg transition-all"
+          size="lg"
+          onClick={handleAddNudge}
+          className="rounded-full w-14 h-14 p-0 bg-gradient-to-r from-finxpert-primary to-finxpert-vivid-purple dark:from-finxpert-vivid-purple dark:to-purple-600 hover:from-finxpert-vivid-purple hover:to-finxpert-primary shadow-lg hover:shadow-xl transition-all group relative z-10 overflow-hidden"
         >
-          <Plus className="h-5 w-5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-finxpert-vivid-purple to-purple-600 dark:from-purple-600 dark:to-finxpert-vivid-purple opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+          <Plus className="h-6 w-6 relative z-10" />
           <span className="sr-only">Add nudge</span>
         </Button>
-      </div>
+      </motion.div>
     </div>
   );
 };
