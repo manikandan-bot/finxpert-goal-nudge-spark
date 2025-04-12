@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// FinXpert theme colors
+				finxpert: {
+					primary: '#9b87f5',
+					secondary: '#7E69AB',
+					neutral: '#8E9196',
+					light: '#F1F0FB',
+					'soft-purple': '#E5DEFF',
+					'soft-blue': '#D3E4FD',
+					'soft-pink': '#FFDEE2',
+					'vivid-purple': '#8B5CF6',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -70,25 +82,44 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'progress-fill': {
+					'0%': { width: '0%' },
+					'100%': { width: 'var(--progress-width)' }
+				},
+				'celebrate': {
+					'0%': { transform: 'scale(0)', opacity: '0' },
+					'70%': { transform: 'scale(1.1)', opacity: '1' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'float': {
+					'0%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' },
+					'100%': { transform: 'translateY(0px)' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
+				},
+				'confetti': {
+					'0%': { transform: 'translateY(0) rotateX(0) rotateY(0)' },
+					'100%': { transform: 'translateY(100vh) rotateX(360deg) rotateY(360deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'progress-fill': 'progress-fill 1.5s ease-out forwards',
+				'celebrate': 'celebrate 0.5s ease-out forwards',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'confetti': 'confetti 3s ease-out forwards'
 			}
 		}
 	},
