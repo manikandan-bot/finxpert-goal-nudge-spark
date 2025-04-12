@@ -1,4 +1,5 @@
-import React, { useState, CSSProperties } from 'react';
+
+import React, { useState } from 'react';
 import { Goal } from '@/types/goals';
 import { formatCurrency, calculateProgress, formatDaysRemaining, getDaysRemaining, getMotivationalMessage, needsAttention } from '@/utils/goalUtils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,11 +36,11 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
   };
   
   return (
-    <Card className="goal-card">
+    <Card className="goal-card hover:shadow-lg transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${requiresAttention ? 'bg-red-100' : 'bg-finxpert-soft-purple'}`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br ${requiresAttention ? 'from-red-100 to-red-50' : 'from-finxpert-soft-purple to-finxpert-light'}`}>
               {React.createElement(iconMap[goal.icon || 'target'] || TrendingUp, { 
                 className: `w-5 h-5 ${requiresAttention ? 'text-red-500' : 'text-finxpert-primary'}` 
               })}
@@ -94,13 +95,13 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
           </div>
           
           {progress >= 25 && progress < 100 && (
-            <Badge className="bg-finxpert-vivid-purple hover:bg-finxpert-vivid-purple/90">
+            <Badge className="bg-gradient-to-r from-finxpert-primary to-finxpert-vivid-purple hover:from-finxpert-primary/90 hover:to-finxpert-vivid-purple/90">
               {progress >= 75 ? "Almost There!" : progress >= 50 ? "Halfway There!" : "25% Reached!"}
             </Badge>
           )}
           
           {progress >= 100 && (
-            <Badge className="bg-green-600 hover:bg-green-600/90">
+            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600/90 hover:to-emerald-600/90">
               Goal Reached! 🎉
             </Badge>
           )}
@@ -113,7 +114,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
         <div className="flex space-x-2 mt-2">
           <Button 
             onClick={() => setShowActions(!showActions)} 
-            className="w-full bg-finxpert-primary hover:bg-finxpert-vivid-purple"
+            className="w-full bg-gradient-to-r from-finxpert-primary to-finxpert-vivid-purple hover:from-finxpert-primary/90 hover:to-finxpert-vivid-purple/90 transition-all duration-300"
           >
             {showActions ? "Cancel" : "Update Goal"}
           </Button>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Header from '@/components/Header';
 import GoalDashboard from '@/components/GoalDashboard';
 import Celebration from '@/components/Celebration';
+import { AnimatePresence } from 'framer-motion';
 
 const Index = () => {
   const [showCelebration, setShowCelebration] = useState(false);
@@ -28,7 +29,9 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-finxpert-light/30">
       <Header />
       <GoalDashboard />
-      <Celebration show={showCelebration} />
+      <AnimatePresence>
+        {showCelebration && <Celebration show={showCelebration} />}
+      </AnimatePresence>
     </div>
   );
 };
