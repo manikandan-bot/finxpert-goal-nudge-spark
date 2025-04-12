@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Nudge } from '@/types/goals';
 import { Card } from '@/components/ui/card';
@@ -147,36 +148,43 @@ const NudgeContainer: React.FC<NudgeContainerProps> = ({ nudges, onDismiss }) =>
         variants={containerVariants}
       >
         <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setActiveCategory(value as NudgeCategory)}>
-          <TabsList className="grid grid-cols-5 mb-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md rounded-xl border border-finxpert-light/50 dark:border-white/5 p-1">
-            <TabsTrigger 
-              value="all" 
-              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
-            >
-              All ({categoryCount.all})
+          <TabsList className="grid grid-cols-5 mb-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md rounded-xl border border-finxpert-light/50 dark:border-white/5 p-1.5 w-full">
+            <TabsTrigger value="all" className="font-medium">
+              <span className="flex items-center gap-2">
+                📝 All ({categoryCount.all})
+              </span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="encouragement" 
-              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
-            >
-              <Heart className="h-3 w-3 mr-1" /> ({categoryCount.encouragement})
+            <TabsTrigger value="encouragement" className="font-medium">
+              <span className="flex items-center gap-2">
+                <Heart className="h-4 w-4 text-pink-500" /> 
+                <span className="hidden sm:inline">Encouragement</span>
+                <span className="sm:hidden">({categoryCount.encouragement})</span>
+                <span className="hidden sm:inline">({categoryCount.encouragement})</span>
+              </span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="suggestion" 
-              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
-            >
-              <Lightbulb className="h-3 w-3 mr-1" /> ({categoryCount.suggestion})
+            <TabsTrigger value="suggestion" className="font-medium">
+              <span className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-500" /> 
+                <span className="hidden sm:inline">Suggestions</span>
+                <span className="sm:hidden">({categoryCount.suggestion})</span>
+                <span className="hidden sm:inline">({categoryCount.suggestion})</span>
+              </span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="warning" 
-              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
-            >
-              <AlertCircle className="h-3 w-3 mr-1" /> ({categoryCount.warning})
+            <TabsTrigger value="warning" className="font-medium">
+              <span className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500" /> 
+                <span className="hidden sm:inline">Reminders</span>
+                <span className="sm:hidden">({categoryCount.warning})</span>
+                <span className="hidden sm:inline">({categoryCount.warning})</span>
+              </span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="celebration" 
-              className="data-[state=active]:bg-white data-[state=active]:dark:bg-gray-800 data-[state=active]:shadow-sm rounded-lg text-xs"
-            >
-              <Trophy className="h-3 w-3 mr-1" /> ({categoryCount.celebration})
+            <TabsTrigger value="celebration" className="font-medium">
+              <span className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-green-500" /> 
+                <span className="hidden sm:inline">Achievements</span>
+                <span className="sm:hidden">({categoryCount.celebration})</span>
+                <span className="hidden sm:inline">({categoryCount.celebration})</span>
+              </span>
             </TabsTrigger>
           </TabsList>
 
