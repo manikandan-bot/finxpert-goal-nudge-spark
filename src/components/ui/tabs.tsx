@@ -13,7 +13,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-12 items-center justify-center rounded-xl bg-muted/60 backdrop-blur-sm p-1.5 text-muted-foreground shadow-sm",
+      "inline-flex h-14 items-center justify-center rounded-xl bg-muted/60 backdrop-blur-sm p-2 text-muted-foreground shadow-sm",
       className
     )}
     {...props}
@@ -28,9 +28,9 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-5 py-3 text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
       "hover:bg-background/70 hover:shadow-md hover:scale-[1.02] hover:text-accent-foreground",
-      "data-[state=active]:bg-gradient-to-r data-[state=active]:from-background data-[state=active]:to-background/95 data-[state=active]:text-foreground data-[state=active]:shadow-md data-[state=active]:shadow-finxpert-primary/10",
+      "data-[state=active]:bg-gradient-to-r data-[state=active]:from-finxpert-primary data-[state=active]:to-finxpert-vivid-purple data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-finxpert-primary/20",
       className
     )}
     {...props}
