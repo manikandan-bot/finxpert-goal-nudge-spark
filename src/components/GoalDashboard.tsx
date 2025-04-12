@@ -40,6 +40,16 @@ const GoalDashboard: React.FC = () => {
     console.log('New goal created:', newGoal);
   };
   
+  const handleDeleteGoal = (goalId: string) => {
+    setGoals(goals.filter(goal => goal.id !== goalId));
+    toast({
+      title: "Goal removed",
+      description: "Your goal has been successfully removed",
+      duration: 3000,
+    });
+    console.log('Goal deleted:', goalId);
+  };
+  
   const handleDismissNudge = (goalId: string, nudgeId: string) => {
     setGoals(goals.map(goal => {
       if (goal.id === goalId) {
@@ -105,6 +115,7 @@ const GoalDashboard: React.FC = () => {
               key={goal.id} 
               goal={goal} 
               onUpdate={handleGoalUpdate}
+              onDelete={handleDeleteGoal}
             />
           ))}
         </div>

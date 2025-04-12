@@ -6,16 +6,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LucideIcon, AlertCircle, Calendar, Trophy, TrendingUp } from 'lucide-react';
+import { LucideIcon, AlertCircle, Calendar, Trophy, TrendingUp, Trash2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import GoalActions from './GoalActions';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface GoalCardProps {
   goal: Goal;
   onUpdate: (goal: Goal) => void;
+  onDelete?: (goalId: string) => void;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -25,8 +36,9 @@ const iconMap: Record<string, LucideIcon> = {
   target: TrendingUp,
 };
 
-const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
+const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate, onDelete }) => {
   const [showActions, setShowActions] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
   
   const progress = calculateProgress(goal.currentAmount, goal.targetAmount);
@@ -41,6 +53,18 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
   
   const handleCardClick = () => {
     navigate(`/goals/${goal.id}`);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (onDelete) {
+      onDelete(goal.id);
+    }
+    setShowDeleteDialog(false);
   };
   
   return (
@@ -144,6 +168,14 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
             >
               {showActions ? "Cancel" : "Update Goal"}
             </Button>
+            
+            <Button
+              onClick={handleDeleteClick}
+              variant="outline"
+              className="bg-white/80 dark:bg-gray-800/60 hover:bg-red-50 dark:hover:bg-red-900/20 border border-gray-200 dark:border-gray-700 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-all duration-300 rounded-xl"
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
           </div>
           
           {showActions && (
@@ -151,6 +183,34 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onUpdate }) => {
               <GoalActions goal={goal} onUpdate={handleUpdate} />
             </div>
           )}
+          
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-gray-900 dark:text-gray-100">Delete Goal</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                  Are you sure you want to delete "{goal.name}"? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel 
+                  className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleConfirmDelete();
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </motion.div>
